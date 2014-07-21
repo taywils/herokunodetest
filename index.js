@@ -7,12 +7,6 @@ require("collections/listen/array-changes");
 var paintQueue = require("collections/deque");
 var PORT = 5000;
 
-var rgbTriple = {
-  "red": 0,
-  "green": 0,
-  "blue": 0
-};
-
 var BOARD_ROWS = 500;
 var BOARD_COLS = 500;
 var initBoard = function() {
@@ -40,17 +34,18 @@ app.get('/', function(req, res) {
 });
 
 io.on('connection', function(socket) {
-  // Add code here for new clients to get a full dump of the current board
+  io.emit('newClient', paintBoard);
+
   /*
   Sent from Client
-  coord = {
+  paintCoord = {
     "x": 0-BOARD_ROWS,
-    "y": 0-BOARD_COLS,
-    "color": "blue"
+    "y": 0-BOARD_COLS
   }
   */
-  socket.on('paint', function(coordAndColor) {
-    io.emit('paint', coordAndColor);
+  socket.on('paint', function(paintCoord) {
+    paintBoard[paintCoord.x][paintCoord.y] = true;
+    io.emit('paint', paintCoord);
   });
 
   socket.on('debug', function(msg) {
@@ -58,6 +53,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('clear', function(clearMsg) {
+    paintBoard = initBoard();
     io.emit('clear', "clear");
   });
 });
