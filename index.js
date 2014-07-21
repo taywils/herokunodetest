@@ -40,30 +40,25 @@ app.get('/', function(req, res) {
 });
 
 io.on('connection', function(socket) {
+  // Add code here for new clients to get a full dump of the current board
   /*
   Sent from Client
-  coordAndColor = {
+  coord = {
     "x": 0-BOARD_ROWS,
     "y": 0-BOARD_COLS,
-    "red": 0-255,
-    "blue": 0-255,
-    "green": 0-255
+    "color": "blue"
   }
   */
   socket.on('paint', function(coordAndColor) {
+    io.emit('paint', coordAndColor);
   });
 
   socket.on('debug', function(msg) {
     io.emit('debug', "Echo from the server: " + msg);
   });
 
-  /*
-  Sent from Client
-  clearMsg = {
-    "clear": true
-  }
-  */
   socket.on('clear', function(clearMsg) {
+    io.emit('clear', "clear");
   });
 });
 
