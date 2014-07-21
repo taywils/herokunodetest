@@ -27,9 +27,7 @@ var port = Number(process.env.PORT || PORT);
 app.use(logfmt.requestLogger());
 
 app.get('/', function(req, res) {
-  var testObj = {"message": "Hello World"};
-  res.json(testObj);
-  console.log(testObj);
+  res.sendfile("index.html");
 });
 
 io.on('connection', function(socket) {

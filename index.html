@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <title>HerokuNodeTestWebClient</title>
+  </head>
+  <body>
+    <h1>Whiteboard Web Client</h1>
+    <button id="clearButton">Clear WhiteBoard</button>
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      var socket = io();
+
+      jQuery('#clearButton').bind("click", function() {
+        socket.emit('clear', "clear");
+      });
+
+      socket.emit('debug', "Hello from web client");
+
+      socket.on('debug', function(msg) {
+        console.log(msg);
+      });
+    </script>
+  </body>
+</html>
