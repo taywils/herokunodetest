@@ -4,7 +4,6 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 require("collections/shim-array");
 require("collections/listen/array-changes");
-var paintQueue = require("collections/deque");
 var PORT = 5000;
 
 var BOARD_ROWS = 500;
@@ -14,7 +13,7 @@ var initBoard = function() {
   for(var row = 0; row < BOARD_ROWS; ++row) {
     var matrixRow = [];
     for(var col = 0; col < BOARD_COLS; ++col) {
-      matrixRow.push(rgbTriple);
+      matrixRow.push(false);
     }
     matrix.push(matrixRow);
   }
@@ -28,7 +27,7 @@ var port = Number(process.env.PORT || PORT);
 app.use(logfmt.requestLogger());
 
 app.get('/', function(req, res) {
-  var testObj = {"message": "Hello World", "testing": 123};
+  var testObj = {"message": "Hello World"};
   res.json(testObj);
   console.log(testObj);
 });
