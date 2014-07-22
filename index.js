@@ -2,8 +2,6 @@ var app = require('express')();
 var logfmt = require('logfmt');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-require("collections/shim-array");
-require("collections/listen/array-changes");
 var PORT = 5000;
 
 var BOARD_ROWS = 500;
@@ -31,18 +29,13 @@ app.get('/', function(req, res) {
 });
 
 io.on('connection', function(socket) {
+  //console.log("Client Connected");
   io.emit('newClient', paintBoard);
 
-  /*
-  Sent from Client
-  paintCoord = {
-    "x": 0-BOARD_ROWS,
-    "y": 0-BOARD_COLS
-  }
-  */
   socket.on('paint', function(paintCoord) {
+    //console.log('paint: [x = ' + paintCoord.x + ", y = " + paintCoord.y + "]");
     paintBoard[paintCoord.x][paintCoord.y] = true;
-    io.emit('paint', paintCoord);
+    socket.broadcast.emit('paint', paintCoord);
   });
 
   socket.on('debug', function(msg) {
@@ -50,11 +43,16 @@ io.on('connection', function(socket) {
   });
 
   socket.on('clear', function(clearMsg) {
+    //console.log('onClear');
     paintBoard = initBoard();
     io.emit('clear', "clear");
+  });
+
+  socket.on('disconnect', function(){
+    //console.log('Client Disconnected');
   });
 });
 
 http.listen(port, function() {
-  console.log('Listening on ' + port);
+  console.log('Whiteboard server now running on HOST:' + port);
 });

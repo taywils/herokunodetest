@@ -2,26 +2,111 @@
 <html>
   <head>
     <title>HerokuNodeTestWebClient</title>
+    <style>
+      body {
+        background-color: #C0C0C0;
+      }
+    </style>
   </head>
   <body>
-    <h1>Whiteboard Web Client</h1>
+    <h1>Whiteboard Web Client (BETA)</h1>
+    <h3>*BETA version doesn't use floating point precision please move your mouse slowly</h3>
     <button id="clearButton">Clear WhiteBoard</button>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
 
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-
     <script>
       var socket = io();
+      var canvas;
+      var context;
+      var oldX;
+      var oldY;
+      var isMouseDown = false;
+
+      function setupCanvas() {
+        canvas = document.getElementById('myCanvas');
+        context = canvas.getContext("2d");
+        context.fillStyle = '#FFFFFF';
+        context.fillRect(0, 0, 500, 500);
+
+        $myCanvas = jQuery("#myCanvas");
+
+        $myCanvas.bind("mousedown",function(e) {
+          isMouseDown = true;
+          paint(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, false);
+        });
+
+        $myCanvas.bind("mousemove", function(e) {
+          if(isMouseDown) {
+            paint(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, true);
+          }
+        });
+
+        $myCanvas.bind("mouseup", function(e) {
+          isMouseDown = false;
+        });
+
+        $myCanvas.bind("mouseleave", function(e) {
+          isMouseDown = false;
+        });
+      }
+
+      function paint(x, y, mouseState) {
+        if(mouseState) {
+          socket.emit('paint', {"x": Math.round(x), "y": Math.round(y)});
+          context.beginPath();
+          context.strokeStyle = "blue";
+          context.lineWidth = 3;
+          context.lineJoin = "round";
+          context.moveTo(oldX, oldY);
+          context.lineTo(x, y);
+          context.closePath();
+          context.stroke();
+        }
+        oldX = x;
+        oldY = y;
+      }
+
+      function paintPoint(x, y, color) {
+        context.fillStyle = color;
+        context.fillRect(x, y, 3, 3);
+      }
+
+      setupCanvas();
 
       jQuery('#clearButton').bind("click", function() {
+        //console.log("emit 'clear'");
         socket.emit('clear', "clear");
+        context.fillStyle = '#FFFFFF';
+        context.fillRect(0, 0, 500, 500);
       });
 
       socket.emit('debug', "Hello from web client");
 
       socket.on('debug', function(msg) {
-        console.log(msg);
+        //console.log(msg);
       });
+
+      socket.on('clear', function(msg) {
+        context.fillStyle = '#FFFFFF';
+        context.fillRect(0, 0, 500, 500);
+      })
+
+      socket.on('newClient', function(paintBoard) {
+        //console.log("Loading paintBoard");
+        for(var row = 0; row < paintBoard.length; ++row) {
+          for(var col = 0; col < paintBoard[row].length; ++col) {
+            if(true == paintBoard[row][col]) {
+              paintPoint(row, col, "green");
+            }
+          }
+        }
+      });
+
+      socket.on('paint', function(paintCoord) {
+        paintPoint(paintCoord.x, paintCoord.y, "green");
+      })
     </script>
   </body>
 </html>
