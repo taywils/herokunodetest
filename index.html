@@ -11,7 +11,7 @@
   <body>
     <h1>Whiteboard Web Client (BETA)</h1>
     <h4>*BETA version doesn't use floating point precision please move your mouse slowly</h4>
-    <h4 id="timerNote">Please wait for socketIO to connect to server</h4>
+    <h4 id="timerNote">Please wait about 10 seconds for socketIO to connect to server</h4>
     <button id="clearButton">Clear WhiteBoard</button>
     <canvas id="myCanvas" width="500" height="500"></canvas>
 
@@ -26,8 +26,6 @@
       var isMouseDown = false;
 
       function setupCanvas() {
-        jQuery("#timerNote").remove();
-
         canvas = document.getElementById('myCanvas');
         context = canvas.getContext("2d");
         context.fillStyle = '#FFFFFF';
@@ -76,7 +74,7 @@
         context.fillRect(x, y, 3, 3);
       }
 
-      setTimeout(setupCanvas(), 10000);
+      setupCanvas();
 
       jQuery('#clearButton').bind("click", function() {
         //console.log("emit 'clear'");
