@@ -5,6 +5,8 @@ Backend Hosted on Heroku
 ------------------------
 http://warm-fortress-2906.herokuapp.com/
 
+- Just for fun pass the url to a friend or open another browser tab to demo
+
 How To Run Locally
 ------------------
 - Install Node.JS
