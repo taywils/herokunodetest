@@ -27,7 +27,7 @@ Next start the application it should begin on localhost
 See the console dump for the port number
 
 ```
-$ node index.js
+$ npm run start
 ```
 
 Launch a web browser to use the WhiteBoard web client

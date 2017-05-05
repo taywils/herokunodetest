@@ -25,7 +25,7 @@ var port = Number(process.env.PORT || PORT);
 app.use(logfmt.requestLogger());
 
 app.get('/', function(req, res) {
-  res.sendfile("index.html");
+  res.sendFile("./index.html", { root: __dirname });
 });
 
 io.on('connection', function(socket) {

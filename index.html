@@ -15,8 +15,8 @@
     <button id="clearButton">Clear WhiteBoard</button>
     <canvas id="myCanvas" width="500" height="500"></canvas>
 
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script>
       var socket = io();
       var canvas;
@@ -24,6 +24,7 @@
       var oldX;
       var oldY;
       var isMouseDown = false;
+      var randomStrokeStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
 
       function setupCanvas() {
         canvas = document.getElementById('myCanvas');
@@ -57,7 +58,7 @@
         if(mouseState) {
           socket.emit('paint', {"x": Math.round(x), "y": Math.round(y)});
           context.beginPath();
-          context.strokeStyle = "blue";
+          context.strokeStyle = randomStrokeStyle;
           context.lineWidth = 3;
           context.lineJoin = "round";
           context.moveTo(oldX, oldY);
